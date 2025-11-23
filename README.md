@@ -9,6 +9,8 @@ Made with:
 - SQL-lite Database to store data
 - Cloudscraper to bypass Cloudflare protection
 
+Currently, can scrape desired products only from Wollplatz. 
+
 
 ## How to use
 
