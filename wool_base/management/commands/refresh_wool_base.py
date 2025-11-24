@@ -24,6 +24,9 @@ class Command(BaseCommand):
     ]
 
     def handle(self, *args, **options):
+        total_created = 0
+        total_updated = 0
+        
         for shop_config in self.SHOPS:
             shop, _ = Shop.objects.get_or_create(
                 name=shop_config['name'],
@@ -43,7 +46,7 @@ class Command(BaseCommand):
                 offer = scraper.scrape_offer(product)
                 
                 if offer:
-                    Offer.objects.update_or_create(
+                    offer_obj, created = Offer.objects.update_or_create(
                         product=product,
                         shop=shop,
                         defaults={
@@ -54,6 +57,12 @@ class Command(BaseCommand):
                             'url': offer.url,
                         }
                     )
+                    if created:
+                        total_created += 1
+                    else:
+                        total_updated += 1
                     self.stdout.write(f'DONE {product.brand} {product.name}')
                 else:
                     self.stdout.write(f'ERROR {product.brand} {product.name} - not found')
+        
+        self.stdout.write(f'Total: created: {total_created}, updated: {total_updated} offers for desired products')
